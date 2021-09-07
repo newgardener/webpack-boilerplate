@@ -1,13 +1,17 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
-const config = {
-  entry: "./routes/index.js",
+module.exports = {
+  entry: [
+    "@babel/polyfill",
+    "./public/js/index.js",
+    "./public/scss/style.scss",
+  ],
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "build.js",
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+    assetModuleFilename: "images/[name][ext]",
   },
   target: "node",
   externals: {
@@ -24,27 +28,20 @@ const config = {
         test: /\.(sa|sc|c)ss$/,
         use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: "asset/resource",
+      },
     ],
-  },
-  /* webpack-dev-server */
-  mode: "development",
-  devtool: "inline-source-map",
-  devServer: {
-    contentBase: "./dist",
-    port: 3000,
-    hot: true,
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "style.css", // 원하는 filename
+      filename: "css/style.css",
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "./public/index.html"),
+      template: path.resolve(__dirname, "./views/index.html"),
       inject: true,
       filename: path.resolve(__dirname, "./dist/index.html"),
     }),
-    new NodePolyfillPlugin(),
   ],
 };
-
-module.exports = config;
